@@ -1,0 +1,49 @@
+put gAPPPATH & "db/feedjson.sqlite" into sDB["feedjson"]["hostname"]
+
+put "" into sDB["feedjson"]["username"]
+
+put "" into sDB["feedjson"]["password"]
+
+put "" into sDB["feedjson"]["database"]
+
+put "sqlite" into sDB["feedjson"]["dbdriver"]
+
+put "" into sDB["feedjson"]["dbprefix"]
+
+put FALSE into sDB["feedjson"]["pconnect"]
+
+put TRUE into sDB["feedjson"]["dbdebug"]
+
+put "" into sDB["feedjson"]["dbRedirectOnError"]
+
+put FALSE into sDB["feedjson"]["cacheon"]
+
+put gBASEPATH & "database/cache/" into sDB["feedjson"]["cachedir"]
+
+put "utf8" into sDB["feedjson"]["charset"]
+
+put "utf8_general_ci" into sDB["feedjson"]["dbcollat"]
+
+put TRUE into sDB["feedjson"]["cacheautodel"]
+
+# SQLite DRIVER ONLY
+put "" into sDB["feedjson"]["options"]
+
+# MYSQL AND THE POSTGRES DRIVER
+# DEFAULT MYSQL: 3306, DEFAULT POSTGRES: 5432
+-- put 3306 into sDB["default"]["port"]
+
+# MYSQL DRIVER ONLY
+put FALSE into sDB["feedjson"]["useSSL"]
+
+# THE FOLLOWING THREE VARIABLES ARE PART OF ENGINE CHANGES 4.6.4
+# BE AWARE THAT THESE ARE NOT TESTED
+# MYSQL DRIVER ONLY
+put "" into sDB["feedjson"]["dbSocket"]
+
+# MYSQL DRIVER ONLY
+put 20 into sDB["feedjson"]["dbTimeout"]
+
+# MYSQL DRIVER ONLY
+put FALSE into sDB["feedjson"]["dbAutoReconnect"]
+#

@@ -1,0 +1,75 @@
+<?lc
+put gBASEPATH into gBASEPATH
+
+if gBASEPATH is "gBASEPATH" then
+	put "No direct script access allowed."
+	exit to top
+end if
+
+
+
+##
+# -------------------------------------------------------------------
+# SETTING A MODULE'S CONFIGURATION VALUE
+# -------------------------------------------------------------------
+#
+# To add configuration data related to your module use
+# the module name as array key.
+##
+
+	# THIS IS THE NAME OF THE MODULE CONTROLLER WHICH GENERATES
+	# THE JSON FEED REQUESTED BY JSON FEED READERS
+	put "feedjson" into gConfig["feedjson"]["feedHTMLlinkTag"]
+  
+  put "My JSON Feed" into gConfig["feedjson"]["feedTitle"]
+  
+  put "My JSON Feed Description" into gConfig["feedjson"]["feedDescription"]
+  
+  put "John Doe" into gConfig["feedjson"]["authorName"]
+  
+  # MINIMUM NUMBER OF CHARACTERS TO BE SHOWN IN THE SUMMARY
+  # DON'T WORRY, SENTENCES WON'T BE CUT
+  put 100 into gConfig["feedjson"]["minNumChars"]
+  
+  # MAX NUMBER OF POSTS PER FEED READER REQUEST
+  put 10 into gConfig["feedjson"]["maxNumPosts"]
+  
+  # MAX NUMBER OF POSTS PER PAGE IN YOUR APP
+  put 3 into gConfig["feedjson"]["newsLimit"]
+  
+  # MAKE SURE YOU IMPLEMENTED A DATABASE GROUP IN YOUR database.lc CONFIG FILE NAMED AS YOU CAN CHOOSE BELOW!
+  put "feedjson" into gConfig["feedjson"]["databaseGroupName"]
+  
+  put "This feed allows you to read the posts from this site in any feed reader that supports the JSON Feed format. To add this feed to your reader, add the following URL to your reader:" into gConfig["feedjson"]["userComment"]
+  
+  # SEE application/config/routes.lc, SET ROUTING THERE FOR "mynewsitem/(:any)" to "feedJsonModuleTest/newsItem/$1"
+  # LIKE: put "feedJsonModuleTest/newsItem/$1" into gRoute[2]["mynewsitem/(:any)"]
+  put "mynewsitem" into gConfig["feedjson"]["routedFeedItemURI"]
+  
+  # SEE application/config/routes.lc, SET ROUTING THERE FOR "mynews" to "feedJsonModuleTest/index"
+  # LIKE: put "feedJsonModuleTest/index" into gRoute[2]["mynews"]
+  # SET ROUTING FOR "mynews/(:any)" to "feedJsonModuleTest/index/$1"
+  # LIKE: put "feedJsonModuleTest/index/$1" into gRoute[5]["mynews/(:any)"] -- needed for ajax requests
+  put "mynews" into gConfig["feedjson"]["routedFeedURI"]
+  
+
+
+##
+# -------------------------------------------------------------------
+# OVERRIDING A GLOBAL CONFIGURATION VALUE
+# -------------------------------------------------------------------
+#
+# To override global configuration data just omit the
+# module's name as array key.
+##
+
+
+  
+  
+  
+
+
+
+--| END OF config.lc
+--| Location: ./system/application/modules/feedjson/config/config.lc
+----------------------------------------------------------------------

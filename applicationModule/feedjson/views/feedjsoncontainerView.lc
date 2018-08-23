@@ -1,0 +1,30 @@
+<!-- news -->
+<section class="container" id="news">
+					
+  <header class="newsHead">
+    <h2 class="text-center"><svg role="img" class="icon newsIcon"><use xlink:href="[[gData["assetsLoc"] ]]img/iconSprite.svg#news" class="icon-news"></use></svg> News</h2>
+    <hr class="half-rule">
+  </header>
+
+
+  <div id="paginationWrapper">
+    <nav id="newsPagination">
+					
+      [[gData["pagination"] ]]
+					
+    </nav>
+  </div>
+
+
+  <div id="newsItems">
+		
+    [[gData["newsData"] ]]
+	
+  </div>
+
+  <footer id="feedjsonLink">
+    <a href="[[gData["feedjsonURL"] ]]"><svg role="img" class="icon feedjsonIcon"><use xlink:href="[[gData["assetsLoc"] ]]img/iconSprite.svg#feedJSON" class="icon-feedjson"></use></svg> JSON feed</a><!-- /test -->
+  </footer>
+
+</section>
+<!-- /news -->

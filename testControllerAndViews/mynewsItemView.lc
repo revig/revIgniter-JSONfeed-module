@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>[[gData["pageTitle"] ]]</title>
+  
+    <? return getHTMLjsonfeedLink() ?>
+	
+    <? return rigCssAsset("feedjson.css", , "feedjson") ?>
+  
+  </head>
+
+  <body>
+
+  <main>
+    <? get rigRunModule("feedjson/feedjsonitem") ?>
+  </main>
+
+  </body>
+</html>

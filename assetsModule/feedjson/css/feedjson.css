@@ -1,0 +1,45 @@
+body {font-size:16px; color:#616161;}
+h2, h3 {margin:20px 0 10px;}
+h2 {font-size:30px;}
+h3 {font-size:24px;}
+a {color:#d43f04; text-decoration:none}
+#feedjsonLink a {outline:none;}
+.newsIcon {width:24px; height:24px;}
+.newsIcon {fill:#616161;}
+.feedjsonIcon {width:32px; height:32px;}
+.feedjsonIcon, .newsIcon {display:inline-block; margin:0 10px -4px 0;}
+.text-center {text-align:center;}
+hr {margin:20px 0; border:0; border-top:1px solid #c7c7c7;}
+.half-rule {width:180px; margin:40px auto;}
+.postdate {color:#929292;}
+.pagination {display:flex; list-style-type: none; padding:0; align-items: center; justify-content: center; margin:30px 0; border-radius:4px;}
+.pagination > li > span, .pagination > li > a {padding:6px 18px; background-color: #e6e6e6;}
+.pagination > li > a, .pagination > li > span {text-decoration:none; color:#d43f04; background-color:#fff; border:1px solid #ddd; margin-left:-1px;}
+.pagination > li:first-child > a, .pagination > li:first-child > span {margin-left:0; border-bottom-left-radius:4px; border-top-left-radius:4px;}
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover,
+.pagination > .active > span, .pagination > .active > span:focus,
+.pagination > .active > span:hover {color:#fff; background-color:#d43f04; border-color:#d43f04; cursor:default;}
+.pagination>li>a:focus, .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover {color:#892902; background-color:#c7c7c7; border-color:#ddd;}
+.pagination > li:last-child > a, .pagination > li:last-child > span {border-bottom-right-radius:4px; border-top-right-radius:4px;}
+#newsItem {
+  display:grid;
+  grid-template-columns: 1fr minmax(150px, 576px) 1fr;
+  grid-template-areas:
+  "leftArea newsHead rightArea"
+  "leftArea newsItems rightArea"
+}
+#news {
+  display:grid;
+  grid-template-columns: 1fr minmax(150px, 576px) 1fr;
+  grid-template-areas:
+  "leftArea newsHead rightArea"
+  "leftArea newsPagination rightArea"
+  "leftArea newsItems rightArea"
+  "leftArea feedLink rightArea"
+}
+/*.newsHead {grid-column-start: 1; grid-column-end: 4;}
+#newsItems {grid-column-start: 2; grid-column-end: 3;}*/
+.newsHead {grid-area:newsHead;}
+#newsItems {grid-area:newsItems; margin:0 10px;}
+#paginationWrapper {grid-area:newsPagination;}
+#feedjsonLink {grid-area:feedLink; margin:0 10px;}

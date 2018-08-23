@@ -1,0 +1,126 @@
+<?lc
+
+put "feedjson,feedjsonIndex" into gModuleHandlers
+local sFJclientHeadersA, sFJdateAndEtagA
+
+# THIS MODULE CONTROLLER GENERATES THE JSON FEED REQUESTED BY JSON FEED READERS
+
+command feedjson
+  rigLoadHelper "date"
+	rigLoadModel "feedjsonmodel", , "feedjson"
+  
+  # MAKE SURE YOU IMPLEMENTED A DATABASE GROUP "feedjson" IN YOUR database.lc CONFIG FILE! SEE modules/feedjson/config/config.lc
+	get rigLoadDatabase(rigFetchConfigItem("databaseGroupName", "feedjson"))
+end feedjson
+
+
+
+command feedjsonIndex
+  put empty into sFJclientHeadersA
+  put empty into sFJdateAndEtagA
+  
+  checkClientHeaders
+
+	# LOAD THE JSON VIEW FILE FOR FEED READERS THAT SUPPORT THE JSON FEED FORMAT
+	get rigLoadView("feedjsonView")
+end feedjsonIndex
+
+
+
+command checkClientHeaders
+  getClientHeaders
+  getFeedModDateAndEtag
+
+  if sFJdateAndEtagA["LAST-MODIFIED"] <> FALSE then
+    
+    # DO NOT SEND THE FEED IF CLIENT HEADERS MATCH WITH LAST MODIFIED DATE AND ETAG
+    if (sFJclientHeadersA["IF_MODIFIED_SINCE"] <> empty) and (sFJclientHeadersA["IF_NONE_MATCH"] <> empty) then
+
+      if (sFJdateAndEtagA["LAST-MODIFIED"] is sFJclientHeadersA["IF_MODIFIED_SINCE"]) and (sFJdateAndEtagA["ETag"] is sFJclientHeadersA["IF_NONE_MATCH"]) then
+        rigSetStatusHeader 304, "Not Modified" & return & return
+      else
+        generateJSONfeed
+      end if
+    
+    else
+			generateJSONfeed
+    end if -- if (sFJclientHeadersA["IF_MODIFIED_SINCE"] <> empty) and (sFJclientHeadersA["IF_NONE_MATCH"] <> empty) then
+  
+  else
+    generateJSONfeed
+  end if
+end checkClientHeaders
+
+
+
+command generateJSONfeed
+  put char 1 to -2 of rigBaseURL() into tBaseURL
+	
+  # VERSION
+  put quote & "https://jsonfeed.org/version/1" & quote into gData["feedVersion"]
+  
+  # TITLE
+  put quote &  rigFetchConfigItem("feedTitle", "feedjson") & quote into gData["feedTitle"]
+  
+  # HOME
+  put quote & tBaseURL & quote into gData["homePageURL"]
+  
+  # FEED URL, THIS IS A ROUTED URI, MAKE SURE "mynews" IS ROUTED TO YOUR FEED CONTROLLER IN YOUR MAIN CONTROLLER DIRECTORY
+  put quote & tBaseURL & "/mynews" &  quote into gData["feedURL"]
+    
+	# DESCRIPTION
+	put quote & rigFetchConfigItem("feedDescription", "feedjson") & quote into gData["feedDescription"]
+  
+  # USER COMMENT
+  put quote & rigFetchConfigItem("userComment", "feedjson") && tBaseURL & "/" & rigFetchConfigItem("feedHTMLlinkTag", "feedjson") & quote into gData["userComment"]
+  
+  # ICONS
+  put rigFetchConfigItem("assetsLocation") into tAssetsLoc
+  if tAssetsLoc is empty then
+    put "assets" into tAssetsLoc
+  end if
+  put tBaseURL & "/" & tAssetsLoc & "/modules/feedjson/" into gData["assetsLoc"]
+  put quote & gData["assetsLoc"] & "img/feedIcon.png" & quote into gData["feedIcon"]
+  put quote & gData["assetsLoc"] & "img/feedFavicon.png" & quote into gData["feedFavicon"]
+  #
+  
+  # AUTHOR
+	put quote & rigFetchConfigItem("authorName", "feedjson") & quote into gData["authorName"]
+
+  -- set the itemdel to space
+  -- put item 4 of the internet date into tYear
+
+  --   set the itemDel to "/"
+  --   put tBaseURL & "/" into tBaseURL
+  -- put "copyright" && tYear & "," &&  item -1 of tBaseURL into gData["feedCRight"]
+
+	# GET DATA FROM MODEL
+  put fetchRecentPosts(rigFetchConfigItem("maxNumPosts", "feedjson")) into gData["itemsData"]
+
+  rigSetHeader "Last-Modified:" && sFJdateAndEtagA["LAST-MODIFIED"]
+  rigSetHeader "ETag:" && quote & sFJdateAndEtagA["ETag"] & quote
+  rigSetHeader "Content-Type: application/json"
+end generateJSONfeed
+
+
+
+command getClientHeaders
+  put rigGetHTTPheader("IF_MODIFIED_SINCE") into sFJclientHeadersA["IF_MODIFIED_SINCE"]
+  put rigGetHTTPheader("IF_NONE_MATCH") into sFJclientHeadersA["IF_NONE_MATCH"]
+end getClientHeaders
+
+
+
+command getFeedModDateAndEtag
+  put mostRecentModDate() into sFJdateAndEtagA["LAST-MODIFIED"]
+  put rigHexDigest(sFJdateAndEtagA["LAST-MODIFIED"]) into sFJdateAndEtagA["ETag"]
+end getFeedModDateAndEtag
+
+
+
+
+
+
+--| END OF feedjson.lc
+--| Location: ./modules/feedjson/controllers/feedjson.lc
+----------------------------------------------------------------------

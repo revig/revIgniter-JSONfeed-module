@@ -1,0 +1,5 @@
+# NOTE: ADD THIS TO THE APP ROUTES, NOT THE MODULE ROUTES
+
+put "feedJsonModuleTest/index" into gRoute[3]["mynews"]
+put "feedJsonModuleTest/index/$1" into gRoute[3]["mynews/(:any)"] -------------- needed for ajax requests
+put "feedJsonModuleTest/newsItem/index/$1" into gRoute[3]["mynewsitem/(:any)"]
