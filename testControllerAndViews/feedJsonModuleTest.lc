@@ -1,0 +1,55 @@
+<?lc
+
+put "feedJsonModuleTest,index,newsItem" into gControllerHandlers
+
+# THIS SAMPLE CONTROLLER SHOWS HOW TO IMPLEMENT THE feedjson MODULE
+# IF YOU USE YOUR OWN CONTROLLER DON'T FORGET TO ADJUST YOUR routes.lc FILE
+
+command feedJsonModuleTest
+	rigLoaderLoadLibrary "Modules"
+end feedJsonModuleTest
+
+
+
+# THE DEFAULT HANDLER (index) IS USED TO DISPLAY THE JSON FEED IN YOUR WEB APP
+
+# SEE application/config/routes.lc, SET ROUTING THERE FOR "mynews" to "feedJsonModuleTest/index"
+# LIKE: put "feedJsonModuleTest/index" into gRoute[2]["mynews"]
+# SET ROUTING FOR "mynews/(:any)" to "feedJsonModuleTest/index/$1"
+# LIKE: put "feedJsonModuleTest/index/$1" into gRoute[5]["mynews/(:any)"] -- needed for ajax requests
+command index
+  # LOAD MODULE AS WIDGET TO DISPLAY THE JSON FEED
+  rigLoadModule "feedjson/feedjsoncontainer"
+  
+	# SET PAGE TITLE
+	put "My News" into gData["pageTitle"]
+
+	# LOAD THE VIEW FILE AND RUN THE MODULE, SEE feedJsonModuleTestView.lc
+	get rigLoadView("feedJsonModuleTestView")
+end index
+
+
+
+# THIS HANDLER IS CALLED WHEN THE FEED READER REQUESTS A PARTICULAR ARTICLE
+
+# THE URL LOOKS LIKE: https://your.domain.com/mynewsitem/ FOLLOWED BY THE TITLE OF THE ARTICLE
+# SEE application/config/routes.lc, SET ROUTING THERE FOR "mynewsitem/(:any)" to "feedJsonModuleTest/newsItem/$1"
+# LIKE: put "feedJsonModuleTest/newsItem/$1" into gRoute[2]["mynewsitem/(:any)"]
+command newsItem
+  # LOAD MODULE AS WIDGET TO DISPLAY A PARTICULAR ARTICLE
+  rigLoadModule "feedjson/feedjsonitem"
+  
+	# SET PAGE TITLE
+	put "My News Item" into gData["pageTitle"]
+
+	# LOAD THE VIEW FILE AND RUN THE MODULE, SEE mynewsItemView.lc
+	get rigLoadView("mynewsItemView")
+end newsItem
+
+
+
+
+
+--| END OF feedJsonModuleTest.lc
+--| Location: ./livecodeServer/application/controllers/feedJsonModuleTest.lc
+----------------------------------------------------------------------

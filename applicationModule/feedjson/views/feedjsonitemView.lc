@@ -1,0 +1,25 @@
+<hr class="topRule">
+						
+						
+<!-- news item -->
+    
+<section class="container" id="newsItem">
+			
+  <header class="newsHead">
+    <h1 class="text-center"><svg role="img" title="News" class="icon newsIcon"><use xlink:href="[[gData["assetsLoc"] ]]img/iconSprite.svg#news" class="icon-news"></use></svg> News item</h1>
+    <hr class="half-rule">
+  </header>
+ 
+
+  <div id="newsItems">
+    <article class="newsItem" >
+        
+      [[gData["newsData"] ]]
+          
+      <hr class="half-rule" >
+    </article>
+  </div>
+		 
+</section>
+    
+<!-- / news item -->

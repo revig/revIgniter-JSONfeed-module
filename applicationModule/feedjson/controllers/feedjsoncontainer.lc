@@ -1,0 +1,171 @@
+<?lc
+
+put "feedjsoncontainer,feedjsoncontainerIndex" into gModuleHandlers
+local sFeedJsonRerouted
+
+# RUN THIS MODULE AS WIDGET TO DISPLAY THE JSON FEED USING <? get rigRunModule("feedjson/feedjsoncontainer") ?> IN YOUR VIEW FILE
+# LIKE IN feedJsonModuleTestView.lc
+# FOR PAGINATION ADD [[gData["ajaxPaginationCode"] ]] TO YOUR VIEW FILE PREFERABLY AT THE BOTTOM JUST BEFORE THE CLOSING BODY TAG
+
+command feedjsoncontainer
+  rigLoaderLoadLibrary "Pagination"
+
+  rigLoadModel "feedjsonmodel", , "feedjson"
+  
+  put "asset,html" into tHelpers
+  rigLoadHelper tHelpers
+  
+  # NEEDED TO GENERATE A FEED LINK
+  rigLoadPlugin "feedjsonlinkPi", "feedjson"
+  
+  # MAKE SURE YOU IMPLEMENTED A DATABASE GROUP "feedjson" IN YOUR database.lc CONFIG FILE! SEE modules/feedjson/config/config.lc
+  get rigLoadDatabase(rigFetchConfigItem("databaseGroupName", "feedjson"))
+	
+  # CHECK ROUTING, NEEDED FOR PAGINATION
+  # SEE application/config/routes.lc, SET ROUTING THERE FOR "mynews" to "feedJsonModuleTest/index"
+  # LIKE: put "feedJsonModuleTest/index" into gRoute[2]["mynews"]
+  # SET ROUTING FOR "mynewsitem/(:any)" to "feedJsonModuleTest/newsItem/$1"
+  # LIKE: put "feedJsonModuleTest/newsItem/$1" into gRoute[2]["mynewsitem/(:any)"]
+  # SET ROUTING FOR "mynews/(:any)" to "feedJsonModuleTest/index/$1"
+  # LIKE: put "feedJsonModuleTest/index/$1" into gRoute[5]["mynews/(:any)"] -- needed for ajax requests
+  if rigFetchSegment(1) is rigFetchConfigItem("routedFeedURI", "feedjson") then -- "mynews"
+    put TRUE into sFeedJsonRerouted
+  else
+    put FALSE into sFeedJsonRerouted
+  end if
+end feedjsoncontainer
+
+
+
+command feedjsoncontainerIndex  
+	# GET ASSETS URI FOR FULL PATH TO SVG FILES USED FOR DECORATION PURPOSES
+  put rigBaseURL() into gData["baseURL"]
+  put rigFetchConfigItem("assetsLocation") into tAssetsLoc
+
+  if tAssetsLoc is empty then
+    put "assets" into tAssetsLoc
+  end if
+
+  put gData["baseURL"] & tAssetsLoc & "/modules/feedjson/" into gData["assetsLoc"]
+	#
+  
+	# GET FEED URI USED BY FEED READERS
+	put gData["baseURL"] & rigFetchConfigItem("feedHTMLlinkTag", "feedjson") into gData["feedjsonURL"]
+  
+  # GET FEED DATA AND PAGINATION CODE
+  news
+	
+	# LOAD THE VIEW FILE
+	get rigLoadView("feedjsoncontainerView")
+end feedjsoncontainerIndex
+
+
+
+
+command news
+  put rigFetchConfigItem("routedFeedURI", "feedjson") into tRoutedFeedURI -- "mynews"
+	# GET NEWS ID FROM URI
+  if sFeedJsonRerouted then
+    put rigFetchSegment(1) into tSegID
+  else
+		put rigFetchRsegment(3) into tSegID
+  end if
+
+	put rigXssClean(tSegID) into tSegID
+
+  # GET TOTAL NUMBER OF ROWS, NEEDED FOR PAGINATION SETTINGS
+  put rigDbCountAllResults("news") into tTotalNumRecords
+
+  # GET LIMIT OF NEWS PER PAGE, NEEDED FOR PAGINATION SETTINGS
+  put rigFetchConfigItem("newsLimit", "feedjson") into tLimit
+
+  if (tSegID is FALSE) or (tSegID is tRoutedFeedURI) then
+    ## PAGINATION CONFIGURATION
+    put rigBaseURL() & tRoutedFeedURI into tConfig["baseUrl"]
+
+    put 2 into tConfig["uriSegment"]
+
+    put 200 into tConfig["totalRows"]
+    put 1 into tConfig["numLinks"]
+
+    put "<ul class=" & quote & "pagination" & quote && "id=" & quote & "newsPaginationList" & quote & ">" into tConfig["fullTagOpen"]
+    put "</ul>" into tConfig["fullTagClose"]
+
+    put "<span aria-hidden=" & quote & "true" & quote & ">&laquo;</span>" into tConfig["firstLink"]
+    put "<li>" into tConfig["firstTagOpen"]
+    put "</li>" into tConfig["firstTagClose"]
+
+    put "<span aria-hidden=" & quote & "true" & quote & ">&raquo;</span>" into tConfig["lastLink"]
+    put "<li>" into tConfig["lastTagOpen"]
+    put "</li>" into tConfig["lastTagClose"]
+
+    put "<span aria-hidden=" & quote & "true" & quote & ">&gt;</span>" into tConfig["nextLink"]
+    put "<li>" into tConfig["nextTagOpen"]
+    put "</li>" into tConfig["nextTagClose"]
+
+    put "<span aria-hidden=" & quote & "true" & quote & ">&lt;</span>" into tConfig["prevLink"]
+    put "<li>" into tConfig["prevTagOpen"]
+    put "</li>" into tConfig["prevTagClose"]
+
+    put "<li class=" & quote & "active" & quote & "><span class=" & quote & "disabled" & quote & ">" into tConfig["curTagOpen"]
+    put "</span></li>" into tConfig["curTagClose"]
+
+    put "<li>" into tConfig["numTagOpen"]
+    put "</li>" into tConfig["numTagClose"]
+
+    put tLimit into tConfig["perPage"]
+
+    # SET TOTAL ROWS CONFIGURATION
+    put tTotalNumRecords into tConfig["totalRows"]
+		
+    # AJAX SETTINGS
+    put "newsPagination" into tConfig["linksElementID"]
+    put "newsItems" into tConfig["dataElementID"]
+    put TRUE into tConfig["ajax"]
+    ##
+
+    rigInitializePagination tConfig
+  end if -- if (tSegID is FALSE) or (tSegID is "news") then
+
+  # GET QUERY OFFSET FROM URI
+  put rigFetchSegment(2) into tTemp
+
+  if (tTemp is an integer) and (tTemp > 0) and (tTemp < tTotalNumRecords) then
+  	put tTemp into tOffset
+  else
+  	put "" into tOffset
+  end if
+
+  # GET DATABASE QUERY RESULT DATA FROM MODEL - ALL DATA
+  -- put newsFetchAllData("news") into tQuery
+
+  # GET DATABASE QUERY RESULT DATA FROM MODEL
+  put newsFetchLimitData("news", tLimit, tOffset) into tQuery
+
+  # NEWS BODY
+  if tQuery <> FALSE then
+  	put titleBodyData(tQuery) into gData["newsData"]
+  else
+  	put "Currently no data available." into gData["newsData"]
+  end if
+
+	# GET PAGINATION
+	if (tSegID is FALSE) or (tSegID is tRoutedFeedURI) or (tSegID is "index") then
+		put rigCreatePaginationLinks() into gData["pagination"]
+	end if
+	
+	# SEND JSON DATA TO BE PROCESSED BY AJAX PAGINATION SCRIPT TO BROWSER
+	rigAjaxPagination gData["newsData"], gData["pagination"]
+
+	# GET AJAX PAGINATION SCRIPT
+  # INCLUDE [[gData["ajaxPaginationCode"] ]] IN YOUR VIEW FILE WHICH RUNS THIS MODULE AS WIDGET
+  put rigAjaxPaginationCode() into gData["ajaxPaginationCode"]
+end news
+
+
+
+
+
+--| END OF feedjsoncontainer.lc
+--| Location: ./application/modules/feedjson/controllers/feedjsoncontainer.lc
+----------------------------------------------------------------------

@@ -1,0 +1,16 @@
+{
+  "version": [[gData["feedVersion"] ]],
+  "title": [[gData["feedTitle"] ]],
+  "home_page_url": [[gData["homePageURL"] ]],
+  "feed_url": [[gData["feedURL"] ]],
+  "description": [[gData["feedDescription"] ]],
+  "user_comment": [[gData["userComment"] ]],
+  "icon": [[gData["feedIcon"] ]],
+  "favicon": [[gData["feedFavicon"] ]],
+  "author": {
+    "name": [[gData["authorName"] ]]
+  },
+  "items": [
+    [[gData["itemsData"] ]]
+  ]
+}

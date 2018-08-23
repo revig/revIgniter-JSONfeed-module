@@ -1,0 +1,16 @@
+<?lc
+
+put "feedjsonHeaderLink" into gModuleHandlers
+
+
+command feedjsonHeaderLink
+  # NEEDED TO GENERATE A FEED LINK
+  rigLoadPlugin "feedjsonlinkPi", "feedjson"
+end feedjsonHeaderLink
+
+
+
+
+--| END OF feedjsonHeaderLink.lc
+--| Location: ./application/modules/feedjson/controllers/feedjsonHeaderLink.lc
+----------------------------------------------------------------------

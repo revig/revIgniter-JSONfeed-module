@@ -1,0 +1,67 @@
+<?lc
+
+put "feedjsonitem,feedjsonitemIndex" into gModuleHandlers
+
+# RUN THIS MODULE AS WIDGET TO DISPLAY JSON FEED ARTICLE USING <? get rigRunModule("feedjson/feedjsoncontainer") ?> IN YOUR VIEW FILE
+# LIKE IN mynewsItemView.lc
+
+command feedjsonitem
+  put "asset,html" into tHelpers
+  rigLoadHelper tHelpers
+  
+	# NEEDED TO GENERATE A FEED LINK
+  rigLoadPlugin "feedjsonlinkPi", "feedjson"
+  
+  rigLoadModel "feedjsonmodel", , "feedjson"
+
+  # MAKE SURE YOU IMPLEMENTED A DATABASE GROUP "feedjson" IN YOUR database.lc CONFIG FILE! SEE modules/feedjson/config/config.lc
+	get rigLoadDatabase(rigFetchConfigItem("databaseGroupName", "feedjson"))
+end feedjsonitem
+
+
+
+command feedjsonitemIndex
+	# GET ASSETS URI FOR FULL PATH TO SVG FILES USED FOR DECORATION PURPOSES
+  put rigBaseURL() into gData["baseURL"]
+  put rigFetchConfigItem("assetsLocation") into tAssetsLoc
+
+  if tAssetsLoc is empty then
+    put "assets" into tAssetsLoc
+  end if
+
+  put gData["baseURL"] & tAssetsLoc & "/modules/feedjson/" into gData["assetsLoc"]
+	#
+  
+  # GET NEWS ID FROM URI, THIS IS THE TITLE OF THE ARTICLE, THE SECOND URI SEGMENT
+  put rigFetchSegment(2) into tNewsID
+
+  # SEGMENT 1 IS mynewsitem, SEE modules/feedjson/config/config.lc
+  # THE URL LOOKS LIKE: https://your.domain.com/mynewsitem/ FOLLOWED BY THE TITLE OF THE ARTICLE
+  # SEE application/config/routes.lc, SET ROUTING THERE FOR "mynewsitem/(:any)" to "feedJsonModuleTest/newsItem/$1"
+  # LIKE: put "feedJsonModuleTest/newsItem/$1" into gRoute[2]["mynewsitem/(:any)"]
+  if (rigFetchSegment(1) is rigFetchConfigItem("routedFeedItemURI", "feedjson")) and (tNewsID <> empty) then
+    put rigXssClean(tNewsID) into tNewsID
+
+    # GENERATE THE ARTICLE DATA
+    put newsFetchItem("news", tNewsID) into tNewsItemA
+    if tNewsItemA <> FALSE then
+      put "<header><h2>" & tNewsItemA["title"] & "</h2></header>" & return & tNewsItemA["body"] & return into gData["newsData"]
+      put "<p><span class=" & quote & "postdate" & quote & ">Posted on" && tNewsItemA["newsDate"] & "</span></p>" & return after gData["newsData"]
+    else
+      put "<p>There are no news with the requested title!</p>" into gData["newsData"]
+    end if
+  end if
+
+	# LOAD THE VIEW FILE
+	get rigLoadView("feedjsonitemView")
+end feedjsonitemIndex
+
+
+
+
+
+
+
+--| END OF feedjsonitem.lc
+--| Location: ./modules/feedjson/controllers/feedjsonitem.lc
+----------------------------------------------------------------------
