@@ -212,9 +212,9 @@ end fetchRecentPosts
 --| FUNCTION getItemsJSONdata
 --|
 --| Author: rabit
---| Version:  1.0
+--| Version:  1.1
 --| Created: 2018-04-21
---| Last Mod: 2018-04-21
+--| Last Mod: 2018-08-25
 --| Requires: rigDbRow(), rigSiteURL(), rigStripHTML()
 --|
 --| Summary: Get JSON feed data. Make sure all feed dates are UTC.
@@ -252,8 +252,18 @@ function getItemsJSONdata pQuery
       
       put rigStripHTML(tBody) into tSummary
       # GET FIRST SENTENCE, BUT AT LEAST A MINIMUM NUMBER OF CHARACTERS AS DEFINED IN THE CONFIG FILE
-      put offset(".", tSummary, tMinNumChars) into tDotOffset
-      put byte 1 to (tMinNumChars + tDotOffset) of tSummary into tSummary
+      put offset(". ", tSummary, tMinNumChars) into tDotOffset
+      # MAY BE THERE IS NO SENTENCE TERMINATED WITH ". "
+      # SO, CHECK IF THERE IS A DOT MISSING A SPACE
+      if tDotOffset is 0 then
+         put offset(".", tSummary, tMinNumChars) into tDotOffset
+      end if
+      # IF tDotOffset IS STILL 0 ADD "..." AFTER THE SUMMARY
+      if tDotOffset is 0 then
+        put (byte 1 to tMinNumChars of tSummary) && "..." into tSummary
+      else
+        put byte 1 to (tMinNumChars + tDotOffset) of tSummary into tSummary
+      end if
       put formatForFeed("summary", tSummary) after tItemsJSONdata
       
       put rigHumanToTimestamp(tRowData["postdate"]) into tPostTimestamp
