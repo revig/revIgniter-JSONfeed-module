@@ -1,4 +1,4 @@
-# revIgniter JSONfeed module (v. 1.0.0)
+# revIgniter JSONfeed module (v. 1.0.1)
 
 This module enables your revIgniter app to publish JSON feeds.  
 In case you never heard of JSON feed, it is a format similar  
@@ -100,6 +100,6 @@ For the license terms see the `LICENSE.txt` file.
 
 ### Meta
 
-- Version: 1.0.0
+- Version: 1.0.1
 - Web Site: https://revigniter.com/
 - Author:  [Ralf Bitter](mailto:rabit@revigniter.com)
