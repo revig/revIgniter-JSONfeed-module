@@ -1,10 +1,38 @@
-<?lc
-put gBASEPATH into gBASEPATH
+script "feedjsonlinkHelper"
 
-if gBASEPATH is "gBASEPATH" then
-	put "No direct script access allowed."
-	exit to top
-end if
+
+
+global gRigA
+
+
+
+
+ /*----------------------------------------------------------------------
+ --| COMMAND libraryStack
+ --|
+ --| Author: rabit
+ --| Version:  1.0
+ --| Created: 2019-02-18
+ --| Last Mod: --
+ --| Requires: --
+ --|
+ --| Summary:  Run security check.
+ --| 
+ --| Parameters: --
+ --|
+ --| Return: empty
+ ----------------------------------------------------------------------*/
+ 
+on libraryStack
+  if (gRigA is not an array) and (the environment is "server") then
+    put "No direct script access allowed."
+    exit to top
+  end if
+
+  if the short name of the target <> the short name of me then
+    pass libraryStack
+  end if -- if the short name of the target = the short name of me
+end libraryStack
 
 
 
@@ -46,6 +74,6 @@ end getHTMLjsonfeedLink
 
 
 
---| END OF feedjsonlinkPi.lc
---| Location:  ./modules/feedjson/plugins/feedjsonlinkPi.lc
+--| END OF feedjsonlinkHelper.livecodescript
+--| Location:  ./modules/feedjson/helpers/feedjsonlinkHelper.livecodescript
 ----------------------------------------------------------------------
