@@ -1,7 +1,5 @@
 <?lc
-put gBASEPATH into gBASEPATH
-
-if gBASEPATH is "gBASEPATH" then
+if gRigA is not an array then
 	put "No direct script access allowed."
 	exit to top
 end if
