@@ -16,7 +16,7 @@ command feedjsoncontainer
   rigLoadHelper tHelpers
   
   # NEEDED TO GENERATE A FEED LINK
-  rigLoadPlugin "feedjsonlinkPi", "feedjson"
+  rigLoadHelper "feedjsonlink", "feedjson"
   
   # MAKE SURE YOU IMPLEMENTED A DATABASE GROUP "feedjson" IN YOUR database.lc CONFIG FILE! SEE modules/feedjson/config/config.lc
   get rigLoadDatabase(rigFetchConfigItem("databaseGroupName", "feedjson"))
@@ -37,7 +37,7 @@ end feedjsoncontainer
 
 
 
-command feedjsoncontainerIndex  
+command feedjsoncontainerIndex
 	# GET ASSETS URI FOR FULL PATH TO SVG FILES USED FOR DECORATION PURPOSES
   put rigBaseURL() into gData["baseURL"]
   put rigFetchConfigItem("assetsLocation") into tAssetsLoc

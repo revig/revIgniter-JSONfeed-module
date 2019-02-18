@@ -1,4 +1,4 @@
-put gAPPPATH & "db/feedjson.sqlite" into sDB["feedjson"]["hostname"]
+put gRigA["APPPATH"] & "db/feedjson.sqlite" into sDB["feedjson"]["hostname"]
 
 put "" into sDB["feedjson"]["username"]
 
@@ -18,7 +18,7 @@ put "" into sDB["feedjson"]["dbRedirectOnError"]
 
 put FALSE into sDB["feedjson"]["cacheon"]
 
-put gBASEPATH & "database/cache/" into sDB["feedjson"]["cachedir"]
+put gRigA["BASEPATH"] & "database/cache/" into sDB["feedjson"]["cachedir"]
 
 put "utf8" into sDB["feedjson"]["charset"]
 

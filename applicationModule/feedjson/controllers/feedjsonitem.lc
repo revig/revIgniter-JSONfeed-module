@@ -10,7 +10,7 @@ command feedjsonitem
   rigLoadHelper tHelpers
   
 	# NEEDED TO GENERATE A FEED LINK
-  rigLoadPlugin "feedjsonlinkPi", "feedjson"
+  rigLoadHelper "feedjsonlink", "feedjson"
   
   rigLoadModel "feedjsonmodel", , "feedjson"
 
