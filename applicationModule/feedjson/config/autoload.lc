@@ -1,7 +1,5 @@
 <?lc
-put gBASEPATH into gBASEPATH
-
-if gBASEPATH is "gBASEPATH" then
+if gRigA is not an array then
 	put "No direct script access allowed."
 	exit to top
 end if
@@ -27,18 +25,19 @@ end if
 #
 # 1. Libraries
 # 2. Stacks
-# 3. Helper files
-# 4. Plugins
-# 5. Custom config files
-# 6. Language files
-# 7. Models
+# 3. Database
+# 4. Helper files
+# 5. Extensions (LiveCode Builder libraries)
+# 6. Custom config files
+# 7. Language files
+# 8. Models
 #
 ##
 
 
 ##
 # -------------------------------------------------------------------
-#  Auto-load Libraries
+#  Auto-load Libraries / Database
 # -------------------------------------------------------------------
 # These are the libraries located in the system/libraries folder,
 # in the system/application/libraries folder or in your
@@ -104,18 +103,23 @@ put sAutoHelper into gModuleAutoload["helper"]
 
 ##
 # -------------------------------------------------------------------
-#  Auto-load Plugins
+#  Auto-load Extensions
 # -------------------------------------------------------------------
 # Prototype:
 #
-#     put "footerlinks,jsCalendar,myPlugin" into sAutoPlugins
-#     split sAutoPlugins using comma
+#     put "com.livecode.library.json,com.mydomain.library.myextension" into sAutoExtensions
+#     split sAutoExtensions using comma
 #
-#     put sAutoPlugins into gModuleAutoload["plugin"]
+#     put sAutoExtensions into gModuleAutoload["extension"]
+#
+#     NOTE: The array values are the names of the folders including the particular module.lcm file.
+#            Please follow the naming convention used by LiveCode Ltd. This means such a folder
+#            name should be composed of a reverse domain, followed by "library" and a library name
+#            all delimited by a period.
 ##
 
-put "" into sAutoPlugins[1]
-put sAutoPlugins into gModuleAutoload["plugin"]
+put "" into sAutoExtensions[1]
+put sAutoExtensions into gModuleAutoload["extension"]
 
 
 ##
