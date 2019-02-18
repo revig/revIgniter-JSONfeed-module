@@ -1,10 +1,39 @@
-<?lc
-put gBASEPATH into gBASEPATH
+script "feedjsonmodel"
 
-if gBASEPATH is "gBASEPATH" then
-	put "No direct script access allowed."
-	exit to top
-end if
+
+
+global gRigA
+
+
+
+
+
+ /*----------------------------------------------------------------------
+ --| COMMAND libraryStack
+ --|
+ --| Author: rabit
+ --| Version:  1.0
+ --| Created: 2019-02-18
+ --| Last Mod: --
+ --| Requires: --
+ --|
+ --| Summary:  Run security check.
+ --| 
+ --| Parameters: --
+ --|
+ --| Return: empty
+ ----------------------------------------------------------------------*/
+ 
+on libraryStack
+  if (gRigA is not an array) and (the environment is "server") then
+    put "No direct script access allowed."
+    exit to top
+  end if
+
+  if the short name of the target <> the short name of me then
+    pass libraryStack
+  end if -- if the short name of the target <> the short name of me
+end libraryStack
 
 
 
@@ -401,6 +430,6 @@ end mostRecentModDate
 
 
 
---| END OF feedjsonmodel.lc
---| Location:  ./modules/feedjson/models/feedjsonmodel.lc
+--| END OF feedjsonmodel.livecodescript
+--| Location:  ./modules/feedjson/models/feedjsonmodel.livecodescript
 ----------------------------------------------------------------------
