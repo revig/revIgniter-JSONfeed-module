@@ -5,7 +5,7 @@ put "feedjsonHeaderLink" into gModuleHandlers
 
 command feedjsonHeaderLink
   # NEEDED TO GENERATE A FEED LINK
-  rigLoadPlugin "feedjsonlinkPi", "feedjson"
+  rigLoadHelper "feedjsonlink", "feedjson"
 end feedjsonHeaderLink
 
 
