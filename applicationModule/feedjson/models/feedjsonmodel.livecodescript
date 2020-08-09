@@ -243,8 +243,9 @@ end fetchRecentPosts
 --| Author: rabit
 --| Version:  1.1
 --| Created: 2018-04-21
---| Last Mod: 2018-08-25
---| Requires: rigDbRow(), rigSiteURL(), rigStripHTML()
+--| Last Mod: 2020-08-09
+--| Requires: rigSiteURL(), rigFetchConfigItem(), rigDbRow(), formatForFeed(), jsonStringEscape()
+--|            rigStripHTML(), rigHumanToTimestamp(), rigStandardDate(), getAuthorsJSONdata()
 --|
 --| Summary: Get JSON feed data. Make sure all feed dates are UTC.
 --| 
@@ -256,16 +257,24 @@ end fetchRecentPosts
 ----------------------------------------------------------------------*/
 
 function getItemsJSONdata pQuery
+  local tItemControllerURL, tMinNumChars, tAllRowData, tRowData, tItemsJSONdata
+  local tResourceURL, tTitle, tBody, tSummary, tDotOffset, tPostTimestamp
+  local tPostModifiedTimestamp, tItemID, tAuthorsJSONdata
+  
   if pQuery["numrows"] > 0 then
     # GET URL OF FEED ITEM CONTROLLER
     put rigSiteURL(rigFetchConfigItem("routedFeedItemURI", "feedjson")) & "/" into tItemControllerURL
     
     # GET MINIMUM NUMBER OF CHARS TO BE SHOWN IN SUMMARIES
     put rigFetchConfigItem("minNumChars", "feedjson") into tMinNumChars
+    
+    repeat with i = 1 to pQuery["numrows"]
+      put rigDbRow(i) into tAllRowData[i]
+    end repeat
 
     # PREPARE JSON DATA
-    repeat with i = 1 to pQuery["numrows"]
-      put rigDbRow(i) into tRowData
+     repeat with i = 1 to the number of lines in the keys of tAllRowData
+      put tAllRowData[i] into tRowData
 
       put "{" & return after tItemsJSONdata
       put tItemControllerURL & tRowData["title"] into tResourceURL
@@ -302,19 +311,27 @@ function getItemsJSONdata pQuery
       if tPostModifiedTimestamp <> false then
         put formatForFeed("date_modified", rigStandardDate("DATE_W3C", tPostModifiedTimestamp)) after tItemsJSONdata
       end if
-
+      
+      # AUTHOR (JSON feed VERSION 1.0)
       if tRowData["authorname"] is "NULL" then
         put "" into tRowData["authorname"]
       end if -- if tRowData["authorname"] is "NULL"
-      put quote & "author" & quote & ": {" & return & quote & "name" & quote & ":" && quote & tRowData["authorname"] & quote & return & "}" & return after tItemsJSONdata
+      put quote & "author" & quote & ": {" & return & quote & "name" & quote & ":" && quote & tRowData["authorname"] & quote & return & "}," & return after tItemsJSONdata
 
+      # AUTHORS DATA (JSON feed VERSION 1.1)
+     put tRowData["id"] into tItemID
+     put getAuthorsJSONdata(tItemID) into tAuthorsJSONdata
+     if tAuthorsJSONdata <> empty then
+       put quote & "authors" & quote & ": [" & return & tAuthorsJSONdata & return & "]" & return after tItemsJSONdata
+     end if -- if tAuthorsJSONdata <> empty
+     
       put "}," & return after tItemsJSONdata
     end repeat
   else
     put "" into tItemsJSONdata
   end if
   #
-
+  
   delete char -4 to -5 of tItemsJSONdata
 
   return char 1 to -3 of tItemsJSONdata
