@@ -15,6 +15,9 @@ end if
 # the module name as array key.
 ##
 
+  # JSON feed VERSION, USE "1.0" OR "1.1"
+  put "1.1" into gConfig["feedjson"]["version"]
+
 	# THIS IS THE NAME OF THE MODULE CONTROLLER WHICH GENERATES
 	# THE JSON FEED REQUESTED BY JSON FEED READERS
 	put "feedjson" into gConfig["feedjson"]["feedHTMLlinkTag"]

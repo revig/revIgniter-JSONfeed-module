@@ -57,7 +57,7 @@ command generateJSONfeed
   put char 1 to -2 of rigBaseURL() into tBaseURL
 	
   # VERSION
-  put quote & "https://jsonfeed.org/version/1" & quote into gData["feedVersion"]
+  put quote & "https://jsonfeed.org/version/" & rigFetchConfigItem("version", "feedjson") & quote into gData["feedVersion"]
   
   # TITLE
   put quote &  rigFetchConfigItem("feedTitle", "feedjson") & quote into gData["feedTitle"]
@@ -99,7 +99,9 @@ command generateJSONfeed
 
   rigSetHeader "Last-Modified:" && sFJdateAndEtagA["LAST-MODIFIED"]
   rigSetHeader "ETag:" && quote & sFJdateAndEtagA["ETag"] & quote
-  rigSetHeader "Content-Type: application/json"
+
+  # JSON feed VERSION 1.1
+  rigSetHeader "Content-Type: application/feed+json"
 end generateJSONfeed
 
 
