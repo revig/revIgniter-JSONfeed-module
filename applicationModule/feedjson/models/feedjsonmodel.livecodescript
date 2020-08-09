@@ -323,6 +323,91 @@ end getItemsJSONdata
 
 
 
+
+/*----------------------------------------------------------------------
+--| FUNCTION getAuthorsJSONdata
+--|
+--| Author: rabit
+--| Version:  1.0
+--| Created: 2020-08-08
+--| Last Mod: 2020-08-08
+--| Requires: rigDbSelect, rigDbFrom, rigDbJoin, rigDbWhere, rigDbGet(), rigDbRow(), formatForFeed
+--|
+--| Summary: Build authors (JSON feed version 1.1) JSON data.
+--| 
+--| Format:  getAuthorsJSONdata([param1])
+--|
+--| Parameters: integer <pNewsID> (optional)
+--|
+--| Return: string
+----------------------------------------------------------------------*/
+
+function getAuthorsJSONdata pNewsID
+  local tQuery, tUndefinedAuthors, tRowData, tAuthorsJSONdata
+  local tURL, tAvatar, tAvatarFormatted
+  
+  if pNewsID <> empty then
+    rigDbSelect "name,url,avatar"
+    rigDbFrom "authors"
+    rigDbJoin "news_authors", "authors.id = news_authors.authors_id"
+    rigDbJoin "news", "news_authors.news_id = news.id"
+    rigDbWhere "news.id", pNewsID
+
+    put rigDbGet() into tQuery
+  
+    if tQuery["numrows"] is 0 then
+      put TRUE into tUndefinedAuthors
+    end if
+  end if
+  
+  # FALLBACK IF NO NEWS ID WAS SPECIFIED: GET TOP-LEVEL AUTHORS DATA
+  if (pNewsID is empty) or (tUndefinedAuthors is TRUE) then
+    rigDbFrom "authors"
+    put rigDbGet() into tQuery
+  end if
+
+  if tQuery["numrows"] > 0 then
+    repeat with i = 1 to tQuery["numrows"]
+      put rigDbRow(i) into tRowData
+    
+      put "{" & return after tAuthorsJSONdata
+      
+      # NAME
+      put tRowData["name"] into tName
+      put formatForFeed("name", tName) after tAuthorsJSONdata
+      
+      #URL
+      put tRowData["url"] into tURL
+      if tURL is "NULL" then
+        put "" into tURL
+      end if
+      put formatForFeed("url", tURL) after tAuthorsJSONdata
+      
+      #AVATAR
+      put tRowData["avatar"] into tAvatar
+      if tAvatar is "NULL" then
+        put "" into tAvatar
+      end if
+      put formatForFeed("avatar", tAvatar) into tAvatarFormatted
+      delete char -2 of tAvatarFormatted
+      put tAvatarFormatted after tAuthorsJSONdata
+    
+      put "}," & return after tAuthorsJSONdata
+    end repeat
+  
+  else
+    put "" into tAuthorsJSONdata
+  end if
+  
+  delete char -4 to -5 of tAuthorsJSONdata
+
+  return char 1 to -3 of tAuthorsJSONdata
+end getAuthorsJSONdata
+
+
+
+
+
 /*----------------------------------------------------------------------
 --| FUNCTION formatForFeed
 --|
