@@ -94,8 +94,14 @@ revIgniter bundles, otherwise just copy and paste the
 code snippets).  
 
 
+### JSON feed Versions Compatibility
+This version of the JSONfeed-Module reflects the changes in  
+version 1.1 of JSON feed, though it is backward compatible  
+with JSON feed version 1.0.  
+
+
 ### License
-For the license terms see the `LICENSE.txt` file.
+For the license terms see the `LICENSE.txt` file.  
 
 
 ### Meta
