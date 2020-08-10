@@ -31,6 +31,7 @@ CREATE TABLE "authors" (
 -- SQLite table definitions for news_authors
 -- ----------------------------
 CREATE TABLE "news_authors" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   "news_id" INTEGER NOT NULL,
   "authors_id" INTEGER NOT NULL,
   CONSTRAINT "Foreign_NewsID" FOREIGN KEY ("news_id") REFERENCES "news" ("id") ON DELETE CASCADE ON UPDATE CASCADE,

@@ -34,8 +34,10 @@ CREATE TABLE "authors" (
 -- Postgre table definitions for news_authors
 -- ----------------------------
 CREATE TABLE "news_authors" (
+	"id" SERIAL NOT NULL,
   "news_id" int NOT NULL,
   "authors_id" int NOT NULL,
+	PRIMARY KEY ("id"),
   CONSTRAINT "Foreign_NewsID" FOREIGN KEY ("news_id") REFERENCES "news" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "Foreign_AuthorsID" FOREIGN KEY ("authors_id") REFERENCES "authors" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );

@@ -33,6 +33,8 @@ CREATE TABLE `authors` (
 #-- MySQL table definitions for news_authors
 #-- ----------------------------
 CREATE TABLE `news_authors` (
+	`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `news_id` int(11) unsigned NOT NULL,
-  `authors_id` int(11) unsigned NOT NULL
+  `authors_id` int(11) unsigned NOT NULL,
+	PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
