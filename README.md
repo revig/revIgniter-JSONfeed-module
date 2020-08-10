@@ -106,6 +106,6 @@ For the license terms see the `LICENSE.txt` file.
 
 ### Meta
 
-- Version: 2.0.0
+- Version: 2.1.0
 - Web Site: https://revigniter.com/
 - Author:  [Ralf Bitter](mailto:rabit@revigniter.com)
