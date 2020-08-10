@@ -26,7 +26,8 @@ end if
   
   put "My JSON Feed Description" into gConfig["feedjson"]["feedDescription"]
   
-  put "John Doe" into gConfig["feedjson"]["authorName"]
+  # USED FOR JSON feed VERSION 1.0
+  put "Jane Doe" into gConfig["feedjson"]["authorName"]
   
   # MINIMUM NUMBER OF CHARACTERS TO BE SHOWN IN THE SUMMARY
   # DON'T WORRY, SENTENCES WON'T BE CUT
