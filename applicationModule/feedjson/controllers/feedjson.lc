@@ -57,7 +57,7 @@ command generateJSONfeed
   put char 1 to -2 of rigBaseURL() into tBaseURL
 	
   # VERSION
-  put quote & "https://jsonfeed.org/version/1" & quote into gData["feedVersion"]
+  put quote & "https://jsonfeed.org/version/" & rigFetchConfigItem("version", "feedjson") & quote into gData["feedVersion"]
   
   # TITLE
   put quote &  rigFetchConfigItem("feedTitle", "feedjson") & quote into gData["feedTitle"]
@@ -84,8 +84,14 @@ command generateJSONfeed
   put quote & gData["assetsLoc"] & "img/feedFavicon.png" & quote into gData["feedFavicon"]
   #
   
-  # AUTHOR
+  # AUTHOR (JSON feed VERSION 1.0)
 	put quote & rigFetchConfigItem("authorName", "feedjson") & quote into gData["authorName"]
+  
+  # AUTHORS (JSON feed VERSION 1.1)
+  put getAuthorsJSONdata() into tAuthorsJSONdata
+  if tAuthorsJSONdata <> empty then
+    put quote & "authors" & quote & ": [" & return & tAuthorsJSONdata & return & "]" into gData["authors"]
+  end if -- if tAuthorsJSONdata <> empty
 
   -- set the itemdel to space
   -- put item 4 of the internet date into tYear
@@ -99,7 +105,9 @@ command generateJSONfeed
 
   rigSetHeader "Last-Modified:" && sFJdateAndEtagA["LAST-MODIFIED"]
   rigSetHeader "ETag:" && quote & sFJdateAndEtagA["ETag"] & quote
-  rigSetHeader "Content-Type: application/json"
+
+  # JSON feed VERSION 1.1
+  rigSetHeader "Content-Type: application/feed+json"
 end generateJSONfeed
 
 

@@ -10,6 +10,7 @@
   "author": {
     "name": [[gData["authorName"] ]]
   },
+    [[gData["authors"] ]],
   "items": [
     [[gData["itemsData"] ]]
   ]
